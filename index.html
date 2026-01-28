@@ -8,6 +8,78 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* Music Control */
+        .music-control {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .music-control:hover {
+            background: rgba(247, 147, 30, 0.3);
+            border-color: var(--primary-orange);
+        }
+
+        .music-icon {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 20px;
+        }
+
+        .music-icon span {
+            width: 4px;
+            background: var(--text-primary);
+            border-radius: 2px;
+            animation: musicBar 0.8s ease-in-out infinite;
+        }
+
+        .music-icon span:nth-child(1) {
+            height: 8px;
+            animation-delay: 0s;
+        }
+
+        .music-icon span:nth-child(2) {
+            height: 16px;
+            animation-delay: 0.2s;
+        }
+
+        .music-icon span:nth-child(3) {
+            height: 12px;
+            animation-delay: 0.4s;
+        }
+
+        .music-icon span:nth-child(4) {
+            height: 18px;
+            animation-delay: 0.6s;
+        }
+
+        @keyframes musicBar {
+            0%, 100% {
+                transform: scaleY(1);
+            }
+            50% {
+                transform: scaleY(0.5);
+            }
+        }
+
+        .music-control.muted .music-icon span {
+            animation: none;
+            height: 4px !important;
+            opacity: 0.5;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -1165,6 +1237,21 @@
     </style>
 </head>
 <body>
+    <!-- Background Music -->
+    <audio id="bgMusic" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Music Control Button -->
+    <div class="music-control" id="musicControl">
+        <div class="music-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-logo">
@@ -1362,7 +1449,7 @@
     <!-- Token Library Section -->
     <section class="game-library">
         <div class="library-header">
-            <h2 class="library-title">Pump Street Families</h2>
+            <h2 class="library-title">Token Ecosystem</h2>
             <p class="library-subtitle">All $GROVE ecosystem tokens, from upcoming launches to the OG collection.</p>
         </div>
         <div class="library-grid">
@@ -1507,6 +1594,52 @@
                     startSlider();
                 }
             });
+        });
+
+        // Background Music Control
+        const bgMusic = document.getElementById('bgMusic');
+        const musicControl = document.getElementById('musicControl');
+        let isMuted = true;
+
+        // Try to autoplay on page load
+        function tryAutoplay() {
+            bgMusic.volume = 0.5;
+            bgMusic.play().then(() => {
+                isMuted = false;
+                musicControl.classList.remove('muted');
+            }).catch(() => {
+                // Autoplay blocked, wait for user interaction
+                isMuted = true;
+                musicControl.classList.add('muted');
+            });
+        }
+
+        // Attempt autoplay when page loads
+        tryAutoplay();
+
+        // Also try on first user interaction
+        document.addEventListener('click', function initAudio() {
+            if (isMuted) {
+                bgMusic.play().then(() => {
+                    isMuted = false;
+                    musicControl.classList.remove('muted');
+                }).catch(() => {});
+            }
+            document.removeEventListener('click', initAudio);
+        }, { once: true });
+
+        // Toggle music on button click
+        musicControl.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (isMuted) {
+                bgMusic.play();
+                isMuted = false;
+                musicControl.classList.remove('muted');
+            } else {
+                bgMusic.pause();
+                isMuted = true;
+                musicControl.classList.add('muted');
+            }
         });
     </script>
 </body>
