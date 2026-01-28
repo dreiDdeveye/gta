@@ -57,26 +57,15 @@
         .nav-logo {
             width: 50px;
             height: 50px;
-            background: var(--text-primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 28px;
-            color: var(--dark-bg);
-            font-weight: bold;
-            position: relative;
         }
 
-        .nav-logo::after {
-            content: '';
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            width: 8px;
-            height: 8px;
-            background: var(--primary-orange);
-            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+        .nav-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .nav-menu {
@@ -646,6 +635,27 @@
             padding: 100px 80px;
             background: linear-gradient(180deg, var(--dark-bg) 0%, #1a0a00 50%, var(--dark-bg) 100%);
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 600px;
+        }
+
+        .game-page-image {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 55%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .game-page-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            mask-image: linear-gradient(to right, transparent 0%, black 30%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 30%);
         }
 
         .game-page-bg {
@@ -661,8 +671,8 @@
 
         .game-page-content {
             position: relative;
-            z-index: 2;
-            max-width: 600px;
+            z-index: 3;
+            max-width: 550px;
         }
 
         .game-page-logo {
@@ -916,28 +926,15 @@
             margin-bottom: 25px;
         }
 
-        .support-logo .r-icon {
+        .support-logo-icon {
             width: 40px;
             height: 40px;
-            background: var(--text-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 24px;
-            color: var(--dark-bg);
-            position: relative;
         }
 
-        .support-logo .r-icon::after {
-            content: '';
-            position: absolute;
-            bottom: 6px;
-            right: 6px;
-            width: 6px;
-            height: 6px;
-            background: var(--primary-orange);
-            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+        .support-logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .support-title {
@@ -1115,6 +1112,11 @@
             .news-card {
                 min-width: 300px;
             }
+
+            .game-page-image {
+                width: 50%;
+                opacity: 0.5;
+            }
         }
 
         @media (max-width: 768px) {
@@ -1155,17 +1157,26 @@
                 flex-direction: column;
                 gap: 40px;
             }
+
+            .game-page-image {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
-        <div class="nav-logo">$G</div>
+        <div class="nav-logo">
+            <img src="logo.png" alt="Logo">
+        </div>
         <ul class="nav-menu">
             <li><a href="#">About</a></li>
+            <li><a href="#">Tokenomics</a></li>
+            <li><a href="#">Roadmap</a></li>
             <li><a href="#">Community</a></li>
             <li><a href="#" class="external">Dexscreener</a></li>
+            <li><a href="#" class="external">Telegram</a></li>
         </ul>
         <div class="nav-right">
             <button class="btn-launcher">Buy $GROVE</button>
@@ -1303,6 +1314,9 @@
     <!-- Game Page Section -->
     <section class="game-page">
         <div class="game-page-bg"></div>
+        <div class="game-page-image">
+            <img src="game-page.jpg" alt="San Degenneas">
+        </div>
         <div class="game-page-content">
             <div class="game-page-logo">
                 <div class="gta-logo">
@@ -1348,7 +1362,7 @@
     <!-- Token Library Section -->
     <section class="game-library">
         <div class="library-header">
-            <h2 class="library-title">Token Ecosystem</h2>
+            <h2 class="library-title">Pump Street Families</h2>
             <p class="library-subtitle">All $GROVE ecosystem tokens, from upcoming launches to the OG collection.</p>
         </div>
         <div class="library-grid">
@@ -1394,7 +1408,9 @@
         <div class="support-bg"></div>
         <div class="support-content">
             <div class="support-logo">
-                <div class="r-icon">$G</div>
+                <div class="support-logo-icon">
+                    <img src="logo.png" alt="Logo">
+                </div>
                 <h2 class="support-title">Community</h2>
             </div>
             <p class="support-text">
