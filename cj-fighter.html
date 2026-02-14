@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CJ Fighter - Grove Street Showdown</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-orange: #F7931E;
+            --dark-bg: #0a0a0a;
+            --darker-bg: #050505;
+            --card-bg: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #999999;
+            --grove-green: #00aa00;
+            --ballas-purple: #9900ff;
+            --health-red: #ff3333;
+            --health-green: #44ff44;
+            --special-yellow: #ffcc00;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Game Container */
+        .game-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .game-header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid var(--primary-orange);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 10px 20px;
+            border: 1px solid var(--text-secondary);
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--primary-orange);
+            border-color: var(--primary-orange);
+        }
+
+        .game-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 64px;
+            letter-spacing: 4px;
+            text-shadow: 4px 4px 0 var(--primary-orange);
+            margin-bottom: 10px;
+        }
+
+        .game-subtitle {
+            color: var(--primary-orange);
+            font-size: 18px;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Character Select Screen */
+        .character-select-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 42px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-orange);
+        }
+
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .character-card {
+            background: var(--card-bg);
+            border: 3px solid transparent;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .character-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-orange);
+            box-shadow: 0 10px 30px rgba(247, 147, 30, 0.3);
+        }
+
+        .character-card.selected {
+            border-color: var(--grove-green);
+            box-shadow: 0 0 30px rgba(0, 170, 0, 0.5);
+        }
+
+        .character-card.locked {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .character-avatar {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .character-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .character-avatar .placeholder {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 36px;
+            color: var(--dark-bg);
+        }
+
+        .character-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .character-title {
+            color: var(--text-secondary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .character-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+        }
+
+        .stat-label {
+            width: 60px;
+            text-align: left;
+            color: var(--text-secondary);
+        }
+
+        .stat-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--darker-bg);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .stat-fill.hp { background: var(--health-red); }
+        .stat-fill.atk { background: var(--primary-orange); }
+        .stat-fill.def { background: #3399ff; }
+        .stat-fill.spd { background: var(--special-yellow); }
+
+        /* Fight Button */
+        .fight-btn {
+            display: block;
+            width: 300px;
+            margin: 30px auto;
+            padding: 20px 40px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 36px;
+            letter-spacing: 4px;
+            background: linear-gradient(180deg, var(--grove-green) 0%, #007700 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+            box-shadow: 0 5px 20px rgba(0, 170, 0, 0.4);
+        }
+
+        .fight-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 170, 0, 0.6);
+        }
+
+        .fight-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* VS Screen */
+        .vs-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+        }
+
+        .vs-fighters {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 60px;
+            margin-bottom: 40px;
+        }
+
+        .vs-fighter {
+            text-align: center;
+        }
+
+        .vs-fighter .character-avatar {
+            width: 180px;
+            height: 180px;
+            font-size: 72px;
+            margin-bottom: 20px;
+            animation: vsEntrance 0.8s ease;
+        }
+
+        .vs-fighter.left .character-avatar {
+            animation: vsEntranceLeft 0.8s ease;
+        }
+
+        .vs-fighter.right .character-avatar {
+            animation: vsEntranceRight 0.8s ease;
+        }
+
+        @keyframes vsEntranceLeft {
+            from { transform: translateX(-200px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes vsEntranceRight {
+            from { transform: translateX(200px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .vs-fighter .character-name {
+            font-size: 36px;
+        }
+
+        .vs-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 100px;
+            color: var(--primary-orange);
+            text-shadow: 4px 4px 0 var(--dark-bg);
+            animation: vsPulse 1s ease infinite;
+        }
+
+        @keyframes vsPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Battle Screen */
+        .battle-arena {
+            background: linear-gradient(180deg, #1a0a00 0%, var(--dark-bg) 50%, #0a0a1a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .battle-arena::before {
+            content: 'GROVE STREET';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 80px;
+            color: rgba(255,255,255,0.03);
+            letter-spacing: 20px;
+            white-space: nowrap;
+        }
+
+        .round-indicator {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .round-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            color: var(--primary-orange);
+            letter-spacing: 4px;
+        }
+
+        .fighters-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
+        .fighter-panel {
+            width: 45%;
+        }
+
+        .fighter-panel.enemy {
+            text-align: right;
+        }
+
+        .fighter-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .fighter-panel.enemy .fighter-info {
+            flex-direction: row-reverse;
+        }
+
+        .fighter-avatar-battle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            border: 3px solid var(--primary-orange);
+        }
+
+        .fighter-avatar-battle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .fighter-details {
+            flex: 1;
+        }
+
+        .fighter-name-battle {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .health-bar-container {
+            background: var(--darker-bg);
+            height: 25px;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid #333;
+        }
+
+        .health-bar {
+            height: 100%;
+            background: linear-gradient(180deg, var(--health-green) 0%, #22aa22 100%);
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .health-bar.low {
+            background: linear-gradient(180deg, var(--health-red) 0%, #aa2222 100%);
+        }
+
+        .health-bar.medium {
+            background: linear-gradient(180deg, var(--special-yellow) 0%, #aaaa22 100%);
+        }
+
+        .health-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            font-size: 12px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .special-bar-container {
+            margin-top: 8px;
+            background: var(--darker-bg);
+            height: 12px;
+            border-radius: 3px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .special-bar {
+            height: 100%;
+            background: linear-gradient(180deg, var(--special-yellow) 0%, #cc9900 100%);
+            transition: width 0.3s ease;
+        }
+
+        .special-label {
+            font-size: 10px;
+            color: var(--special-yellow);
+            margin-top: 3px;
+        }
+
+        /* Battle Sprites */
+        .battle-sprites {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 250px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .battle-sprite {
+            width: 150px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 100px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .battle-sprite img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .battle-sprite.attacking {
+            animation: attackAnimation 0.5s ease;
+        }
+
+        .battle-sprite.hit {
+            animation: hitAnimation 0.5s ease;
+        }
+
+        .battle-sprite.player.attacking {
+            animation: attackRight 0.5s ease;
+        }
+
+        .battle-sprite.enemy.attacking {
+            animation: attackLeft 0.5s ease;
+        }
+
+        @keyframes attackRight {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(100px); }
+        }
+
+        @keyframes attackLeft {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-100px); }
+        }
+
+        @keyframes hitAnimation {
+            0%, 100% { transform: translateX(0); filter: brightness(1); }
+            25% { transform: translateX(-10px); filter: brightness(2); }
+            75% { transform: translateX(10px); filter: brightness(0.5); }
+        }
+
+        .damage-number {
+            position: absolute;
+            top: 0;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            color: var(--health-red);
+            text-shadow: 2px 2px 0 #000;
+            animation: damageFloat 1s ease forwards;
+            pointer-events: none;
+        }
+
+        .damage-number.heal {
+            color: var(--health-green);
+        }
+
+        .damage-number.critical {
+            font-size: 64px;
+            color: var(--primary-orange);
+        }
+
+        @keyframes damageFloat {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-80px); }
+        }
+
+        /* Battle Log */
+        .battle-log {
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            padding: 15px;
+            height: 80px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+
+        .log-entry {
+            font-size: 14px;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            animation: logSlide 0.3s ease;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-entry.player-action {
+            color: var(--grove-green);
+        }
+
+        .log-entry.enemy-action {
+            color: var(--ballas-purple);
+        }
+
+        .log-entry.system {
+            color: var(--special-yellow);
+        }
+
+        @keyframes logSlide {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .action-btn {
+            padding: 20px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .action-btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .action-btn.light {
+            background: linear-gradient(180deg, #4a90d9 0%, #2a5a99 100%);
+            color: white;
+        }
+
+        .action-btn.heavy {
+            background: linear-gradient(180deg, #d94a4a 0%, #992a2a 100%);
+            color: white;
+        }
+
+        .action-btn.block {
+            background: linear-gradient(180deg, #5a5a5a 0%, #3a3a3a 100%);
+            color: white;
+        }
+
+        .action-btn.special {
+            background: linear-gradient(180deg, var(--special-yellow) 0%, #997700 100%);
+            color: var(--dark-bg);
+        }
+
+        .action-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+        }
+
+        .action-desc {
+            font-family: 'Roboto', sans-serif;
+            font-size: 10px;
+            letter-spacing: 0;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        /* Winner Screen */
+        .winner-screen {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .winner-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 72px;
+            margin-bottom: 20px;
+            animation: winnerPulse 1s ease infinite;
+        }
+
+        .winner-title.victory {
+            color: var(--grove-green);
+            text-shadow: 0 0 30px rgba(0, 170, 0, 0.5);
+        }
+
+        .winner-title.defeat {
+            color: var(--health-red);
+            text-shadow: 0 0 30px rgba(255, 51, 51, 0.5);
+        }
+
+        @keyframes winnerPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .winner-avatar {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            border: 5px solid var(--primary-orange);
+            animation: winnerBounce 1s ease infinite;
+        }
+
+        .winner-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        @keyframes winnerBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .winner-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            margin-bottom: 30px;
+        }
+
+        .winner-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .winner-stat {
+            text-align: center;
+        }
+
+        .winner-stat-value {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            color: var(--primary-orange);
+        }
+
+        .winner-stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .play-again-btn {
+            padding: 20px 60px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            letter-spacing: 4px;
+            background: linear-gradient(180deg, var(--primary-orange) 0%, #cc7700 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .play-again-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(247, 147, 30, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 42px;
+            }
+
+            .character-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .vs-fighters {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .vs-text {
+                font-size: 60px;
+            }
+
+            .action-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .fighters-display {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .fighter-panel {
+                width: 100%;
+            }
+
+            .fighter-panel.enemy {
+                text-align: left;
+            }
+
+            .fighter-panel.enemy .fighter-info {
+                flex-direction: row;
+            }
+
+            .battle-sprites {
+                height: 150px;
+            }
+
+            .battle-sprite {
+                width: 100px;
+                height: 130px;
+                font-size: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Header -->
+        <header class="game-header">
+            <a href="grove-memecoin.html" class="back-btn">&larr; Back to Site</a>
+            <h1 class="game-title">CJ Fighter</h1>
+            <p class="game-subtitle">Grove Street Showdown</p>
+        </header>
+
+        <!-- Character Select Screen -->
+        <div class="screen active" id="selectScreen">
+            <h2 class="character-select-title">Choose Your Fighter</h2>
+            <div class="character-grid" id="characterGrid">
+                <!-- Characters will be generated by JS -->
+            </div>
+            <button class="fight-btn" id="fightBtn" disabled>Select a Fighter</button>
+        </div>
+
+        <!-- VS Screen -->
+        <div class="screen" id="vsScreen">
+            <div class="vs-screen">
+                <div class="vs-fighters">
+                    <div class="vs-fighter left">
+                        <div class="character-avatar" id="vsPlayer">
+                            <div class="placeholder" id="vsPlayerAvatar"></div>
+                        </div>
+                        <div class="character-name" id="vsPlayerName"></div>
+                    </div>
+                    <div class="vs-text">VS</div>
+                    <div class="vs-fighter right">
+                        <div class="character-avatar" id="vsEnemy">
+                            <div class="placeholder" id="vsEnemyAvatar"></div>
+                        </div>
+                        <div class="character-name" id="vsEnemyName"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Battle Screen -->
+        <div class="screen" id="battleScreen">
+            <div class="battle-arena">
+                <div class="round-indicator">
+                    <span class="round-text" id="roundText">ROUND 1</span>
+                </div>
+
+                <div class="fighters-display">
+                    <div class="fighter-panel player">
+                        <div class="fighter-info">
+                            <div class="fighter-avatar-battle" id="playerAvatarBattle">
+                                <div class="placeholder" id="playerAvatarPlaceholder"></div>
+                            </div>
+                            <div class="fighter-details">
+                                <div class="fighter-name-battle" id="playerNameBattle"></div>
+                                <div class="health-bar-container">
+                                    <div class="health-bar" id="playerHealthBar">
+                                        <span class="health-text" id="playerHealthText">100/100</span>
+                                    </div>
+                                </div>
+                                <div class="special-bar-container">
+                                    <div class="special-bar" id="playerSpecialBar"></div>
+                                </div>
+                                <div class="special-label">SPECIAL</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fighter-panel enemy">
+                        <div class="fighter-info">
+                            <div class="fighter-avatar-battle" id="enemyAvatarBattle">
+                                <div class="placeholder" id="enemyAvatarPlaceholder"></div>
+                            </div>
+                            <div class="fighter-details">
+                                <div class="fighter-name-battle" id="enemyNameBattle"></div>
+                                <div class="health-bar-container">
+                                    <div class="health-bar" id="enemyHealthBar">
+                                        <span class="health-text" id="enemyHealthText">100/100</span>
+                                    </div>
+                                </div>
+                                <div class="special-bar-container">
+                                    <div class="special-bar" id="enemySpecialBar"></div>
+                                </div>
+                                <div class="special-label">SPECIAL</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="battle-sprites">
+                    <div class="battle-sprite player" id="playerSprite"></div>
+                    <div class="battle-sprite enemy" id="enemySprite"></div>
+                </div>
+
+                <div class="battle-log" id="battleLog">
+                    <div class="log-entry system">Fight!</div>
+                </div>
+
+                <div class="action-buttons" id="actionButtons">
+                    <button class="action-btn light" data-action="light">
+                        Light Attack
+                        <div class="action-desc">Fast, low damage</div>
+                    </button>
+                    <button class="action-btn heavy" data-action="heavy">
+                        Heavy Attack
+                        <div class="action-desc">Slow, high damage</div>
+                    </button>
+                    <button class="action-btn block" data-action="block">
+                        Block
+                        <div class="action-desc">Reduce damage</div>
+                    </button>
+                    <button class="action-btn special" data-action="special" disabled>
+                        Special Move
+                        <div class="action-desc">Requires full bar</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Winner Screen -->
+        <div class="screen" id="winnerScreen">
+            <div class="winner-screen">
+                <h2 class="winner-title" id="winnerTitle">Victory!</h2>
+                <div class="winner-avatar" id="winnerAvatar"></div>
+                <div class="winner-name" id="winnerName"></div>
+                <div class="winner-stats">
+                    <div class="winner-stat">
+                        <div class="winner-stat-value" id="totalDamage">0</div>
+                        <div class="winner-stat-label">Total Damage</div>
+                    </div>
+                    <div class="winner-stat">
+                        <div class="winner-stat-value" id="roundsWon">0</div>
+                        <div class="winner-stat-label">Rounds Won</div>
+                    </div>
+                </div>
+                <button class="play-again-btn" id="playAgainBtn">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Character Data
+        const characters = [
+            {
+                id: 'cj',
+                name: 'CJ',
+                title: 'Grove Street OG',
+                color: '#00aa00',
+                hp: 100,
+                atk: 75,
+                def: 70,
+                spd: 80,
+                special: 'Grove Street 4 Life',
+                specialDesc: 'Power punch combo',
+                avatar: 'cj.png'
+            },
+            {
+                id: 'bigsmoke',
+                name: 'Big Smoke',
+                title: 'Two Number 9s',
+                color: '#aa5500',
+                hp: 120,
+                atk: 90,
+                def: 60,
+                spd: 40,
+                special: 'Order Up',
+                specialDesc: 'Heavy slam + heal',
+                avatar: 'bigsmoke.png'
+            },
+            {
+                id: 'ryder',
+                name: 'Ryder',
+                title: 'Sherm Head',
+                color: '#aa00aa',
+                hp: 80,
+                atk: 65,
+                def: 50,
+                spd: 100,
+                special: 'Sherm Rush',
+                specialDesc: 'Speed combo attack',
+                avatar: 'ryder.png'
+            },
+            {
+                id: 'sweet',
+                name: 'Sweet',
+                title: 'Family First',
+                color: '#00aaaa',
+                hp: 110,
+                atk: 70,
+                def: 90,
+                spd: 60,
+                special: 'Brother\'s Keeper',
+                specialDesc: 'Defense + counter',
+                avatar: 'sweet.png'
+            },
+            {
+                id: 'tenpenny',
+                name: 'Tenpenny',
+                title: 'Corrupt Cop',
+                color: '#0055aa',
+                hp: 90,
+                atk: 85,
+                def: 65,
+                spd: 70,
+                special: 'Badge of Dishonor',
+                specialDesc: 'Ranged gun attack',
+                avatar: 'tenpenny.png'
+            },
+            {
+                id: 'ogloc',
+                name: 'OG Loc',
+                title: 'Wannabe Gangsta',
+                color: '#ffaa00',
+                hp: 70,
+                atk: 50,
+                def: 40,
+                spd: 90,
+                special: 'Rap Attack',
+                specialDesc: 'Confuse enemy',
+                avatar: 'ogloc.png'
+            },
+            {
+                id: 'cesar',
+                name: 'Cesar',
+                title: 'Varrios Los Aztecas',
+                color: '#00aa55',
+                hp: 95,
+                atk: 80,
+                def: 75,
+                spd: 75,
+                special: 'Lowrider Slam',
+                specialDesc: 'Counter specialist',
+                avatar: 'cesar.png'
+            },
+            {
+                id: 'ballas',
+                name: 'Ballas OG',
+                title: 'Purple Menace',
+                color: '#9900ff',
+                hp: 100,
+                atk: 80,
+                def: 70,
+                spd: 70,
+                special: 'Drive-By',
+                specialDesc: 'Multi-hit attack',
+                avatar: 'ballas.png'
+            }
+        ];
+
+        // Game State
+        let selectedCharacter = null;
+        let enemyCharacter = null;
+        let playerState = null;
+        let enemyState = null;
+        let currentRound = 1;
+        let playerRoundsWon = 0;
+        let enemyRoundsWon = 0;
+        let totalDamageDealt = 0;
+        let isPlayerTurn = true;
+        let gameOver = false;
+
+        // DOM Elements
+        const screens = {
+            select: document.getElementById('selectScreen'),
+            vs: document.getElementById('vsScreen'),
+            battle: document.getElementById('battleScreen'),
+            winner: document.getElementById('winnerScreen')
+        };
+
+        // Initialize Character Select
+        function initCharacterSelect() {
+            const grid = document.getElementById('characterGrid');
+            grid.innerHTML = '';
+
+            characters.forEach(char => {
+                const card = document.createElement('div');
+                card.className = 'character-card';
+                card.dataset.id = char.id;
+                card.innerHTML = `
+                    <div class="character-avatar" style="background: ${char.color}">
+                        <div class="placeholder">${char.name.charAt(0)}</div>
+                    </div>
+                    <div class="character-name">${char.name}</div>
+                    <div class="character-title">${char.title}</div>
+                    <div class="character-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">HP</span>
+                            <div class="stat-bar"><div class="stat-fill hp" style="width: ${char.hp}%"></div></div>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">ATK</span>
+                            <div class="stat-bar"><div class="stat-fill atk" style="width: ${char.atk}%"></div></div>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">DEF</span>
+                            <div class="stat-bar"><div class="stat-fill def" style="width: ${char.def}%"></div></div>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">SPD</span>
+                            <div class="stat-bar"><div class="stat-fill spd" style="width: ${char.spd}%"></div></div>
+                        </div>
+                    </div>
+                `;
+                card.addEventListener('click', () => selectCharacter(char.id));
+                grid.appendChild(card);
+            });
+        }
+
+        // Select Character
+        function selectCharacter(id) {
+            document.querySelectorAll('.character-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            const card = document.querySelector(`.character-card[data-id="${id}"]`);
+            card.classList.add('selected');
+
+            selectedCharacter = characters.find(c => c.id === id);
+            document.getElementById('fightBtn').disabled = false;
+            document.getElementById('fightBtn').textContent = 'FIGHT!';
+        }
+
+        // Start Fight
+        function startFight() {
+            // Select random enemy (different from player)
+            const enemies = characters.filter(c => c.id !== selectedCharacter.id);
+            enemyCharacter = enemies[Math.floor(Math.random() * enemies.length)];
+
+            // Show VS Screen
+            showScreen('vs');
+            setupVSScreen();
+
+            // After VS screen, start battle
+            setTimeout(() => {
+                showScreen('battle');
+                initBattle();
+            }, 3000);
+        }
+
+        // Setup VS Screen
+        function setupVSScreen() {
+            document.getElementById('vsPlayerAvatar').textContent = selectedCharacter.name.charAt(0);
+            document.getElementById('vsPlayerAvatar').parentElement.style.background = selectedCharacter.color;
+            document.getElementById('vsPlayerName').textContent = selectedCharacter.name;
+
+            document.getElementById('vsEnemyAvatar').textContent = enemyCharacter.name.charAt(0);
+            document.getElementById('vsEnemyAvatar').parentElement.style.background = enemyCharacter.color;
+            document.getElementById('vsEnemyName').textContent = enemyCharacter.name;
+        }
+
+        // Initialize Battle
+        function initBattle() {
+            playerState = {
+                ...selectedCharacter,
+                currentHp: selectedCharacter.hp,
+                maxHp: selectedCharacter.hp,
+                special: 0,
+                blocking: false
+            };
+
+            enemyState = {
+                ...enemyCharacter,
+                currentHp: enemyCharacter.hp,
+                maxHp: enemyCharacter.hp,
+                special: 0,
+                blocking: false
+            };
+
+            currentRound = 1;
+            playerRoundsWon = 0;
+            enemyRoundsWon = 0;
+            totalDamageDealt = 0;
+            isPlayerTurn = true;
+            gameOver = false;
+
+            updateBattleUI();
+            document.getElementById('battleLog').innerHTML = '<div class="log-entry system">Round 1 - FIGHT!</div>';
+            enableActions(true);
+        }
+
+        // Update Battle UI
+        function updateBattleUI() {
+            // Player
+            document.getElementById('playerAvatarPlaceholder').textContent = playerState.name.charAt(0);
+            document.getElementById('playerAvatarBattle').style.background = playerState.color;
+            document.getElementById('playerNameBattle').textContent = playerState.name;
+            
+            const playerHpPercent = (playerState.currentHp / playerState.maxHp) * 100;
+            const playerHealthBar = document.getElementById('playerHealthBar');
+            playerHealthBar.style.width = playerHpPercent + '%';
+            playerHealthBar.className = 'health-bar' + (playerHpPercent < 25 ? ' low' : playerHpPercent < 50 ? ' medium' : '');
+            document.getElementById('playerHealthText').textContent = `${Math.max(0, Math.round(playerState.currentHp))}/${playerState.maxHp}`;
+            document.getElementById('playerSpecialBar').style.width = playerState.special + '%';
+
+            // Enemy
+            document.getElementById('enemyAvatarPlaceholder').textContent = enemyState.name.charAt(0);
+            document.getElementById('enemyAvatarBattle').style.background = enemyState.color;
+            document.getElementById('enemyNameBattle').textContent = enemyState.name;
+            
+            const enemyHpPercent = (enemyState.currentHp / enemyState.maxHp) * 100;
+            const enemyHealthBar = document.getElementById('enemyHealthBar');
+            enemyHealthBar.style.width = enemyHpPercent + '%';
+            enemyHealthBar.className = 'health-bar' + (enemyHpPercent < 25 ? ' low' : enemyHpPercent < 50 ? ' medium' : '');
+            document.getElementById('enemyHealthText').textContent = `${Math.max(0, Math.round(enemyState.currentHp))}/${enemyState.maxHp}`;
+            document.getElementById('enemySpecialBar').style.width = enemyState.special + '%';
+
+            // Sprites
+            document.getElementById('playerSprite').innerHTML = `<div style="font-size: 80px; color: ${playerState.color}">${playerState.name.charAt(0)}</div>`;
+            document.getElementById('enemySprite').innerHTML = `<div style="font-size: 80px; color: ${enemyState.color}">${enemyState.name.charAt(0)}</div>`;
+
+            // Round
+            document.getElementById('roundText').textContent = `ROUND ${currentRound} (${playerRoundsWon} - ${enemyRoundsWon})`;
+
+            // Special button
+            document.querySelector('.action-btn.special').disabled = playerState.special < 100;
+        }
+
+        // Enable/Disable Actions
+        function enableActions(enabled) {
+            document.querySelectorAll('.action-btn').forEach(btn => {
+                if (btn.dataset.action === 'special') {
+                    btn.disabled = !enabled || playerState.special < 100;
+                } else {
+                    btn.disabled = !enabled;
+                }
+            });
+        }
+
+        // Add Log Entry
+        function addLog(message, type = 'system') {
+            const log = document.getElementById('battleLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = message;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // Show Damage Number
+        function showDamage(damage, isPlayer, type = 'normal') {
+            const sprite = document.getElementById(isPlayer ? 'enemySprite' : 'playerSprite');
+            const damageEl = document.createElement('div');
+            damageEl.className = 'damage-number' + (type === 'heal' ? ' heal' : type === 'critical' ? ' critical' : '');
+            damageEl.textContent = (type === 'heal' ? '+' : '-') + Math.round(damage);
+            sprite.appendChild(damageEl);
+            setTimeout(() => damageEl.remove(), 1000);
+        }
+
+        // Calculate Damage
+        function calculateDamage(attacker, defender, attackType) {
+            let baseDamage = attacker.atk;
+            let multiplier = 1;
+
+            switch (attackType) {
+                case 'light':
+                    multiplier = 0.5;
+                    break;
+                case 'heavy':
+                    multiplier = 1.0;
+                    break;
+                case 'special':
+                    multiplier = 1.5;
+                    break;
+            }
+
+            // Speed bonus for light attacks
+            if (attackType === 'light') {
+                multiplier += (attacker.spd / 200);
+            }
+
+            // Defense reduction
+            let defense = defender.def / 100;
+            if (defender.blocking) {
+                defense *= 2;
+            }
+
+            // Critical hit chance
+            let critical = false;
+            if (Math.random() < 0.15) {
+                multiplier *= 1.5;
+                critical = true;
+            }
+
+            const damage = Math.max(5, (baseDamage * multiplier) * (1 - defense * 0.5));
+            return { damage: Math.round(damage), critical };
+        }
+
+        // Player Action
+        function playerAction(action) {
+            if (!isPlayerTurn || gameOver) return;
+
+            enableActions(false);
+            playerState.blocking = false;
+
+            const playerSprite = document.getElementById('playerSprite');
+            const enemySprite = document.getElementById('enemySprite');
+
+            if (action === 'block') {
+                playerState.blocking = true;
+                playerState.special = Math.min(100, playerState.special + 15);
+                addLog(`${playerState.name} takes a defensive stance!`, 'player-action');
+                updateBattleUI();
+                setTimeout(enemyTurn, 1000);
+                return;
+            }
+
+            // Attack animation
+            playerSprite.classList.add('attacking');
+            setTimeout(() => playerSprite.classList.remove('attacking'), 500);
+
+            setTimeout(() => {
+                const { damage, critical } = calculateDamage(playerState, enemyState, action);
+                enemyState.currentHp -= damage;
+                totalDamageDealt += damage;
+
+                // Build special meter
+                if (action !== 'special') {
+                    playerState.special = Math.min(100, playerState.special + (action === 'light' ? 15 : 25));
+                } else {
+                    playerState.special = 0;
+                }
+
+                enemySprite.classList.add('hit');
+                setTimeout(() => enemySprite.classList.remove('hit'), 500);
+
+                showDamage(damage, true, critical ? 'critical' : 'normal');
+                
+                const attackName = action === 'special' ? playerState.specialDesc : action + ' attack';
+                addLog(`${playerState.name} uses ${attackName}! ${critical ? 'CRITICAL! ' : ''}${damage} damage!`, 'player-action');
+
+                updateBattleUI();
+
+                // Check if enemy is defeated
+                if (enemyState.currentHp <= 0) {
+                    playerWinsRound();
+                } else {
+                    setTimeout(enemyTurn, 1000);
+                }
+            }, 300);
+        }
+
+        // Enemy Turn
+        function enemyTurn() {
+            if (gameOver) return;
+
+            isPlayerTurn = false;
+            enemyState.blocking = false;
+
+            // Simple AI
+            let action;
+            const hpPercent = enemyState.currentHp / enemyState.maxHp;
+
+            if (enemyState.special >= 100 && Math.random() < 0.7) {
+                action = 'special';
+            } else if (hpPercent < 0.3 && Math.random() < 0.4) {
+                action = 'block';
+            } else if (Math.random() < 0.6) {
+                action = 'light';
+            } else {
+                action = 'heavy';
+            }
+
+            const enemySprite = document.getElementById('enemySprite');
+            const playerSprite = document.getElementById('playerSprite');
+
+            if (action === 'block') {
+                enemyState.blocking = true;
+                enemyState.special = Math.min(100, enemyState.special + 15);
+                addLog(`${enemyState.name} takes a defensive stance!`, 'enemy-action');
+                updateBattleUI();
+                setTimeout(() => {
+                    isPlayerTurn = true;
+                    enableActions(true);
+                }, 1000);
+                return;
+            }
+
+            // Attack animation
+            enemySprite.classList.add('attacking');
+            setTimeout(() => enemySprite.classList.remove('attacking'), 500);
+
+            setTimeout(() => {
+                let { damage, critical } = calculateDamage(enemyState, playerState, action);
+
+                // Reduce damage if player is blocking
+                if (playerState.blocking) {
+                    damage = Math.round(damage * 0.5);
+                }
+
+                playerState.currentHp -= damage;
+
+                // Build special meter
+                if (action !== 'special') {
+                    enemyState.special = Math.min(100, enemyState.special + (action === 'light' ? 15 : 25));
+                } else {
+                    enemyState.special = 0;
+                }
+
+                playerSprite.classList.add('hit');
+                setTimeout(() => playerSprite.classList.remove('hit'), 500);
+
+                showDamage(damage, false, critical ? 'critical' : 'normal');
+
+                const attackName = action === 'special' ? enemyState.specialDesc : action + ' attack';
+                addLog(`${enemyState.name} uses ${attackName}! ${critical ? 'CRITICAL! ' : ''}${damage} damage!${playerState.blocking ? ' (Blocked!)' : ''}`, 'enemy-action');
+
+                playerState.blocking = false;
+                updateBattleUI();
+
+                // Check if player is defeated
+                if (playerState.currentHp <= 0) {
+                    enemyWinsRound();
+                } else {
+                    isPlayerTurn = true;
+                    enableActions(true);
+                }
+            }, 300);
+        }
+
+        // Player Wins Round
+        function playerWinsRound() {
+            playerRoundsWon++;
+            addLog(`${playerState.name} wins Round ${currentRound}!`, 'system');
+
+            if (playerRoundsWon >= 2) {
+                // Player wins the match
+                gameOver = true;
+                setTimeout(() => showWinner(true), 1500);
+            } else {
+                // Next round
+                currentRound++;
+                setTimeout(startNewRound, 2000);
+            }
+        }
+
+        // Enemy Wins Round
+        function enemyWinsRound() {
+            enemyRoundsWon++;
+            addLog(`${enemyState.name} wins Round ${currentRound}!`, 'system');
+
+            if (enemyRoundsWon >= 2) {
+                // Enemy wins the match
+                gameOver = true;
+                setTimeout(() => showWinner(false), 1500);
+            } else {
+                // Next round
+                currentRound++;
+                setTimeout(startNewRound, 2000);
+            }
+        }
+
+        // Start New Round
+        function startNewRound() {
+            playerState.currentHp = playerState.maxHp;
+            enemyState.currentHp = enemyState.maxHp;
+            playerState.special = 0;
+            enemyState.special = 0;
+            playerState.blocking = false;
+            enemyState.blocking = false;
+            isPlayerTurn = true;
+
+            addLog(`Round ${currentRound} - FIGHT!`, 'system');
+            updateBattleUI();
+            enableActions(true);
+        }
+
+        // Show Winner
+        function showWinner(playerWon) {
+            showScreen('winner');
+
+            const title = document.getElementById('winnerTitle');
+            const avatar = document.getElementById('winnerAvatar');
+            const name = document.getElementById('winnerName');
+
+            if (playerWon) {
+                title.textContent = 'VICTORY!';
+                title.className = 'winner-title victory';
+                avatar.style.background = playerState.color;
+                avatar.innerHTML = playerState.name.charAt(0);
+                name.textContent = playerState.name + ' Wins!';
+            } else {
+                title.textContent = 'DEFEAT';
+                title.className = 'winner-title defeat';
+                avatar.style.background = enemyState.color;
+                avatar.innerHTML = enemyState.name.charAt(0);
+                name.textContent = enemyState.name + ' Wins!';
+            }
+
+            document.getElementById('totalDamage').textContent = totalDamageDealt;
+            document.getElementById('roundsWon').textContent = playerRoundsWon;
+        }
+
+        // Show Screen
+        function showScreen(screenName) {
+            Object.values(screens).forEach(screen => screen.classList.remove('active'));
+            screens[screenName].classList.add('active');
+        }
+
+        // Reset Game
+        function resetGame() {
+            selectedCharacter = null;
+            enemyCharacter = null;
+            document.querySelectorAll('.character-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.getElementById('fightBtn').disabled = true;
+            document.getElementById('fightBtn').textContent = 'Select a Fighter';
+            showScreen('select');
+        }
+
+        // Event Listeners
+        document.getElementById('fightBtn').addEventListener('click', startFight);
+        document.getElementById('playAgainBtn').addEventListener('click', resetGame);
+
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (!btn.disabled) {
+                    playerAction(btn.dataset.action);
+                }
+            });
+        });
+
+        // Initialize
+        initCharacterSelect();
+    </script>
+</body>
+</html>

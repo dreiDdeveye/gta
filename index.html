@@ -196,6 +196,34 @@
             color: var(--dark-bg);
         }
 
+        .btn-wallet {
+            background: var(--primary-orange);
+            border: none;
+            color: var(--dark-bg);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-wallet:hover {
+            background: var(--accent-gold);
+            transform: scale(1.02);
+        }
+
+        .btn-wallet.connected {
+            background: var(--accent-green);
+            color: var(--text-primary);
+        }
+
+        .btn-wallet.connected:hover {
+            background: #f44336;
+        }
+
         /* Hero Section */
         .hero {
             height: 100vh;
@@ -513,6 +541,187 @@
 
         .pause-btn.playing span:last-child {
             display: none;
+        }
+
+        /* Game Section */
+        .game-section {
+            padding: 80px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a00 50%, #0a0a0a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 30% 50%, rgba(247, 147, 30, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 50%, rgba(0, 170, 0, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .games-header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .game-badge {
+            display: inline-block;
+            background: var(--primary-orange);
+            color: var(--dark-bg);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .games-section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 56px;
+            letter-spacing: 4px;
+            text-shadow: 3px 3px 0 var(--primary-orange);
+            margin-bottom: 10px;
+        }
+
+        .games-section-subtitle {
+            color: var(--text-secondary);
+            font-size: 18px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .game-card-large {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .game-card-large:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-orange);
+            box-shadow: 0 20px 60px rgba(247, 147, 30, 0.3);
+        }
+
+        .game-card-image {
+            height: 250px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .game-card-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #1a0a00 0%, #0d0d0d 50%, #0a1a0a 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            letter-spacing: 6px;
+            color: var(--primary-orange);
+        }
+
+        .game-card-placeholder .placeholder-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .game-card-info {
+            padding: 25px;
+        }
+
+        .game-card-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .game-card-desc {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .game-card-features {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .game-card-features span {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .game-card-btn {
+            display: inline-block;
+            background: linear-gradient(180deg, #00aa00 0%, #007700 100%);
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .game-card-large:hover .game-card-btn {
+            background: linear-gradient(180deg, #00cc00 0%, #009900 100%);
+            box-shadow: 0 5px 20px rgba(0, 170, 0, 0.4);
+        }
+
+        @media (max-width: 1024px) {
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .game-section {
+                padding: 60px 30px;
+            }
+
+            .games-section-title {
+                font-size: 42px;
+            }
+
+            .game-card-image {
+                height: 200px;
+            }
         }
 
         /* News Section */
@@ -1218,11 +1427,13 @@
         </div>
         <ul class="nav-menu">
             <li><a href="#">About</a></li>
-            <li><a href="#">Roadmap</a></li>
             <li><a href="#">Community</a></li>
+            <li><a href="cj-fighter.html">CJ Fighter</a></li>
+            <li><a href="grove-slots.html">Slots</a></li>
         </ul>
         <div class="nav-right">
             <button class="btn-launcher">Buy $GROVE</button>
+            <button class="btn-wallet">Connect Wallet</button>
             <div class="nav-music-control" id="musicControl">
                 <div class="music-icon">
                     <span></span>
@@ -1355,6 +1566,57 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Game Section -->
+    <section class="game-section">
+        <div class="games-header">
+            <div class="game-badge">ARCADE</div>
+            <h2 class="games-section-title">$GROVE Games</h2>
+            <p class="games-section-subtitle">Play to earn, degen style</p>
+        </div>
+        <div class="games-grid">
+            <!-- CJ Fighter -->
+            <a href="cj-fighter.html" class="game-card-large">
+                <div class="game-card-image">
+                    <img src="game-cjfighter.jpg" alt="CJ Fighter">
+                    <div class="game-card-placeholder">
+                        <span class="placeholder-icon">🥊</span>
+                        <span>CJ FIGHTER</span>
+                    </div>
+                </div>
+                <div class="game-card-info">
+                    <h3 class="game-card-title">CJ Fighter</h3>
+                    <p class="game-card-desc">Grove Street Showdown - Choose your fighter and battle!</p>
+                    <div class="game-card-features">
+                        <span>8 Fighters</span>
+                        <span>Turn-Based</span>
+                        <span>Best of 3</span>
+                    </div>
+                    <div class="game-card-btn">Play Now</div>
+                </div>
+            </a>
+            <!-- Grove Slots -->
+            <a href="grove-slots.html" class="game-card-large">
+                <div class="game-card-image">
+                    <img src="game-slots.jpg" alt="Grove Slots">
+                    <div class="game-card-placeholder">
+                        <span class="placeholder-icon">🎰</span>
+                        <span>GROVE SLOTS</span>
+                    </div>
+                </div>
+                <div class="game-card-info">
+                    <h3 class="game-card-title">Grove Street Slots</h3>
+                    <p class="game-card-desc">Try your luck at the $GROVE Casino!</p>
+                    <div class="game-card-features">
+                        <span>9 Symbols</span>
+                        <span>Jackpot</span>
+                        <span>Auto Spin</span>
+                    </div>
+                    <div class="game-card-btn">Play Now</div>
+                </div>
+            </a>
         </div>
     </section>
 
@@ -1601,6 +1863,122 @@
                 musicControl.classList.add('muted');
             }
         });
+
+        // Phantom Wallet Connection
+        const walletBtn = document.querySelector('.btn-wallet');
+        let walletConnected = false;
+        let walletAddress = null;
+
+        // Check if Phantom is installed
+        const getProvider = () => {
+            if ('phantom' in window) {
+                const provider = window.phantom?.solana;
+                if (provider?.isPhantom) {
+                    return provider;
+                }
+            }
+            return null;
+        };
+
+        // Shorten wallet address for display
+        const shortenAddress = (address) => {
+            return address.slice(0, 4) + '...' + address.slice(-4);
+        };
+
+        // Connect wallet function
+        const connectWallet = async () => {
+            const provider = getProvider();
+            
+            if (!provider) {
+                // Phantom not installed, open install page
+                window.open('https://phantom.app/', '_blank');
+                return;
+            }
+
+            try {
+                const response = await provider.connect();
+                walletAddress = response.publicKey.toString();
+                walletConnected = true;
+                walletBtn.textContent = shortenAddress(walletAddress);
+                walletBtn.classList.add('connected');
+                console.log('Connected to wallet:', walletAddress);
+            } catch (err) {
+                console.error('Connection failed:', err);
+            }
+        };
+
+        // Disconnect wallet function
+        const disconnectWallet = async () => {
+            const provider = getProvider();
+            
+            if (provider) {
+                try {
+                    await provider.disconnect();
+                    walletConnected = false;
+                    walletAddress = null;
+                    walletBtn.textContent = 'Connect Wallet';
+                    walletBtn.classList.remove('connected');
+                    console.log('Disconnected from wallet');
+                } catch (err) {
+                    console.error('Disconnect failed:', err);
+                }
+            }
+        };
+
+        // Handle wallet button click
+        walletBtn.addEventListener('click', async () => {
+            if (walletConnected) {
+                await disconnectWallet();
+            } else {
+                await connectWallet();
+            }
+        });
+
+        // Check if already connected on page load
+        const checkIfConnected = async () => {
+            const provider = getProvider();
+            if (provider) {
+                try {
+                    const response = await provider.connect({ onlyIfTrusted: true });
+                    walletAddress = response.publicKey.toString();
+                    walletConnected = true;
+                    walletBtn.textContent = shortenAddress(walletAddress);
+                    walletBtn.classList.add('connected');
+                } catch (err) {
+                    // Not connected yet, that's fine
+                }
+            }
+        };
+
+        // Listen for account changes
+        const setupWalletListeners = () => {
+            const provider = getProvider();
+            if (provider) {
+                provider.on('accountChanged', (publicKey) => {
+                    if (publicKey) {
+                        walletAddress = publicKey.toString();
+                        walletBtn.textContent = shortenAddress(walletAddress);
+                    } else {
+                        // Disconnected
+                        walletConnected = false;
+                        walletAddress = null;
+                        walletBtn.textContent = 'Connect Wallet';
+                        walletBtn.classList.remove('connected');
+                    }
+                });
+
+                provider.on('disconnect', () => {
+                    walletConnected = false;
+                    walletAddress = null;
+                    walletBtn.textContent = 'Connect Wallet';
+                    walletBtn.classList.remove('connected');
+                });
+            }
+        };
+
+        // Initialize wallet connection check
+        checkIfConnected();
+        setupWalletListeners();
     </script>
 </body>
 </html>
